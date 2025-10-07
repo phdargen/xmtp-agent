@@ -1,6 +1,7 @@
 export * from "./walletProvider";
 export * from "./evmWalletProvider";
 export * from "./viemWalletProvider";
+export * from "./readOnlyEvmWalletProvider";
 export * from "./cdpShared";
 export * from "./cdpEvmWalletProvider";
 export * from "./cdpSmartWalletProvider";

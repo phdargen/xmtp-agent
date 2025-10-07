@@ -15,6 +15,7 @@ export * from "./defillama";
 export * from "./enso";
 export * from "./erc20";
 export * from "./erc721";
+export * from "./externalWalletERC20";
 export * from "./farcaster";
 export * from "./jupiter";
 export * from "./messari";
