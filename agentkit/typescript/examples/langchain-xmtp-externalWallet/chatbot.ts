@@ -117,10 +117,11 @@ async function initializeAgent(
       model: "gpt-4o-mini",
     });
 
-    // Create read-only wallet provider (no wallet, just RPC access)
+    // Create read-only wallet provider with user's address
     const walletProvider = ReadOnlyEvmWalletProvider.configure({
       networkId: process.env.NETWORK_ID || "base-sepolia",
       rpcUrl: process.env.RPC_URL,
+      address: userEthAddress,
     });
 
     // Initialize AgentKit with external wallet action provider

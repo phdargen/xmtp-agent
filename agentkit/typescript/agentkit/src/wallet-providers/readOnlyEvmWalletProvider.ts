@@ -30,6 +30,12 @@ export interface ReadOnlyEvmWalletProviderConfig {
    * Optional RPC URL override. If not provided, uses the default RPC from viem chain config.
    */
   rpcUrl?: string;
+
+  /**
+   * Optional wallet address. If provided, this address will be returned by getAddress().
+   * Useful for tracking the user's wallet address when preparing transactions for external wallets.
+   */
+  address?: string;
 }
 
 /**
@@ -41,6 +47,7 @@ export class ReadOnlyEvmWalletProvider extends EvmWalletProvider {
   #publicClient: ViemPublicClient;
   #chain: Chain;
   #networkId: string;
+  #address?: string;
 
   /**
    * Private constructor. Use `configure()` factory method instead.
@@ -48,11 +55,13 @@ export class ReadOnlyEvmWalletProvider extends EvmWalletProvider {
    * @param chain - The viem chain.
    * @param networkId - The network ID.
    * @param rpcUrl - Optional RPC URL override.
+   * @param address - Optional wallet address.
    */
-  private constructor(chain: Chain, networkId: string, rpcUrl?: string) {
+  private constructor(chain: Chain, networkId: string, rpcUrl?: string, address?: string) {
     super();
     this.#chain = chain;
     this.#networkId = networkId;
+    this.#address = address;
     this.#publicClient = createPublicClient({
       chain: chain,
       transport: rpcUrl ? http(rpcUrl) : http(),
@@ -71,17 +80,18 @@ export class ReadOnlyEvmWalletProvider extends EvmWalletProvider {
       throw new Error(`Unsupported network ID: ${config.networkId}`);
     }
 
-    return new ReadOnlyEvmWalletProvider(chain, config.networkId, config.rpcUrl);
+    return new ReadOnlyEvmWalletProvider(chain, config.networkId, config.rpcUrl, config.address);
   }
 
   /**
-   * Gets a dummy address since this is a read-only provider.
-   * Returns zero address as this provider doesn't have a wallet.
+   * Gets the wallet address if configured, otherwise returns zero address.
+   * When an address is provided in the config, it represents the external wallet address
+   * that will sign transactions prepared by this provider.
    *
-   * @returns The zero address.
+   * @returns The configured wallet address or zero address if not set.
    */
   getAddress(): string {
-    return "0x0000000000000000000000000000000000000000";
+    return this.#address || "0x0000000000000000000000000000000000000000";
   }
 
   /**
